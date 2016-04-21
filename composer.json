@@ -1,0 +1,34 @@
+{
+    "name": "larakit/lk-staticfiles",
+    "description": "[Larakit] Библиотека для Laravel для управления статикой (сборка в один файл, сжатие JS/CSS, добавление хэша в URL для сброса кэша браузера)",
+    "keywords": [
+        "laravel",
+        "laravel 5",
+        "css",
+        "js",
+        "larastatic",
+        "larakit"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexey Berdnikov",
+            "email": "aberdnikov@gmail.com"
+        }
+    ],
+    "require": {
+        "laravel/framework": "5.*",
+        "larakit/lk-spa": "*",
+        "innogames/cssmin": "*",
+        "linkorb/jsmin-php": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Larakit\\StaticFiles\\": "src/StaticFiles"
+        },
+        "files": [
+            "src/init.php"
+        ]
+    },
+    "minimum-stability": "dev"
+}
