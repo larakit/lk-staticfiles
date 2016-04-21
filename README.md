@@ -3,7 +3,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/larakit/lk-staticfiles/v/unstable.svg)](https://packagist.org/packages/larakit/lk-staticfiles)
 [![License](https://poser.pugx.org/larakit/lk-staticfiles/license.svg)](https://packagist.org/packages/larakit/lk-staticfiles)
 
-#lk-staticfiles
+#lk-staticfiles!
 Библиотека для Laravel для управления статикой (сборка в один файл, сжатие JS/CSS, добавление хэша в URL для сброса кэша браузера)
 
 ##Step 1 
