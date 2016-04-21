@@ -2,12 +2,12 @@
     "name": "larakit/lk-staticfiles",
     "description": "[Larakit] Библиотека для Laravel для управления статикой (сборка в один файл, сжатие JS/CSS, добавление хэша в URL для сброса кэша браузера)",
     "keywords": [
+        "larakit",
         "laravel",
         "laravel 5",
         "js",
         "css",
-        "larastatic",
-        "larakit"
+        "larastatic"
     ],
     "license": "MIT",
     "authors": [
