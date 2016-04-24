@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Package {
+
     protected $css        = [];
     protected $js         = [];
     protected $require    = [];
@@ -21,12 +22,9 @@ class Package {
      */
     protected $scopes = [];
 
-
     function __construct($package) {
         $this->package = $package;
-        $this->setSourceDir(base_path('vendor/' . $this->package . '/public'));
     }
-
 
     /**
      * Добавить пакет, от которого есть зависимость
@@ -37,6 +35,7 @@ class Package {
      */
     function usePackage($package) {
         $this->require[$package] = $package;
+
         return $this;
     }
 
@@ -51,6 +50,7 @@ class Package {
      */
     function js($js, $condition = null, $no_build = false) {
         $this->js[$js] = compact('condition', 'no_build');
+
         return $this;
     }
 
@@ -66,6 +66,7 @@ class Package {
      */
     function css($css, $media = null, $condition = null, $no_build = false) {
         $this->css[$css] = compact('media', 'condition', 'no_build');
+
         return $this;
     }
 
@@ -96,7 +97,6 @@ class Package {
         return $this->css('/packages/' . $this->package . '/' . $css, $media, $condition, $no_build);
     }
 
-
     /**
      * Добавить именованный набор внутри пакета
      *
@@ -111,6 +111,7 @@ class Package {
      */
     function scopeInit($scope, $js = [], $css = []) {
         $this->scopes[$scope] = compact('js', 'css');
+
         return $this;
     }
 
@@ -126,14 +127,15 @@ class Package {
      * @return Package
      */
     function scope($scope) {
-        $styles  = (array)Arr::get($this->scopes, $scope . '.css', []);
-        $scripts = (array)Arr::get($this->scopes, $scope . '.js', []);
-        foreach ($styles as $style) {
+        $styles  = (array) Arr::get($this->scopes, $scope . '.css', []);
+        $scripts = (array) Arr::get($this->scopes, $scope . '.js', []);
+        foreach($styles as $style) {
             $this->css($style);
         }
-        foreach ($scripts as $script) {
+        foreach($scripts as $script) {
             $this->js($script);
         }
+
         return $this;
     }
 
@@ -144,6 +146,7 @@ class Package {
      */
     function clearCss() {
         $this->css = [];
+
         return $this;
     }
 
@@ -154,9 +157,9 @@ class Package {
      */
     function clearJs() {
         $this->js = [];
+
         return $this;
     }
-
 
     /**
      * Установить поддиректорию внутри пакета (public/dist),
@@ -168,6 +171,7 @@ class Package {
      */
     function setSourceDir($dir) {
         $this->source_dir = rtrim(rtrim($dir, '/'), '\\');
+
         return $this;
     }
 
@@ -179,7 +183,8 @@ class Package {
      * @return $this
      */
     function setExclude($exclude) {
-        $this->exclude = (array)$exclude;
+        $this->exclude = (array) $exclude;
+
         return $this;
     }
 
@@ -192,9 +197,10 @@ class Package {
      */
     function addExclude($exclude) {
         $exclude = func_get_args();
-        foreach ($exclude as $v) {
-            $this->exclude = array_merge($this->exclude, (array)$v);
+        foreach($exclude as $v) {
+            $this->exclude = array_merge($this->exclude, (array) $v);
         }
+
         return $this;
     }
 
@@ -206,7 +212,8 @@ class Package {
      * @return $this
      */
     function setInclude($include) {
-        $this->include = (array)$include;
+        $this->include = (array) $include;
+
         return $this;
     }
 
@@ -219,9 +226,10 @@ class Package {
      */
     function addInclude($include) {
         $include = func_get_args();
-        foreach ($include as $v) {
-            $this->include = array_merge($this->include, (array)$v);
+        foreach($include as $v) {
+            $this->include = array_merge($this->include, (array) $v);
         }
+
         return $this;
     }
 
@@ -230,38 +238,39 @@ class Package {
      * @return bool
      */
     function on() {
-        if ($this->is_used) {
+        if($this->is_used) {
             return true;
         }
         $route   = \Route::currentRouteName();
         $exclude = self::maxIs($this->exclude, $route);
         $include = self::maxIs($this->include, $route);
-        if ($exclude > $include || true === $exclude) {
+        if($exclude > $include || true === $exclude) {
             // исключаем
         } else {
             // подключаем
             //сперва подключим на страницу зависимости
-            foreach ((array)$this->require as $require) {
+            foreach((array) $this->require as $require) {
                 Manager::package($require)
                        ->on();
             }
             //затем подключим CSS
-            foreach ($this->css as $url => $item) {
+            foreach($this->css as $url => $item) {
                 $condition = Arr::get($item, 'condition', null);
                 $media     = Arr::get($item, 'media', null);
-                $no_build  = (bool)Arr::get($item, 'no_build', false);
+                $no_build  = (bool) Arr::get($item, 'no_build', false);
                 Css::instance()
                    ->add($url, $media, $condition, $no_build);
             }
             //затем подключим JS
-            foreach ($this->js as $url => $item) {
+            foreach($this->js as $url => $item) {
                 $condition = Arr::get($item, 'condition', null);
-                $no_build  = (bool)Arr::get($item, 'no_build', false);
+                $no_build  = (bool) Arr::get($item, 'no_build', false);
                 Js::instance()
                   ->add($url, $condition, $no_build);
             }
         }
         $this->is_used = true;
+
         return true;
     }
 
@@ -273,13 +282,14 @@ class Package {
      */
     static protected function maxIs($input_array, $search) {
         $ret = 0;
-        foreach ((array)$input_array as $input) {
+        foreach((array) $input_array as $input) {
             $is = self::is($input, $search);
-            if (true === $is) {
+            if(true === $is) {
                 return true;
             }
             $ret = max($is, $ret);
         }
+
         return $ret;
     }
 
@@ -290,17 +300,17 @@ class Package {
      * @return bool|int
      */
     static protected function is($search, $current) {
-        if ($search == $current) {
+        if($search == $current) {
             return true;
         }
-        if ('*' == $search) {
+        if('*' == $search) {
             return 1;
         }
 
         $pattern = preg_quote($search, '#');
         $pattern = str_replace('\*', '.*', $pattern) . '\z';
-        $match   = (bool)preg_match('#^' . $pattern . '#', $current);
-        if ($match) {
+        $match   = (bool) preg_match('#^' . $pattern . '#', $current);
+        if($match) {
             return mb_strlen($search);
         }
 
@@ -314,17 +324,18 @@ class Package {
      * @return bool
      */
     function deploy($output = null) {
-        if (!$this->source_dir) {
+        if(!$this->source_dir) {
             return false;
         }
-        if (!is_dir($this->source_dir)) {
+        if(!is_dir($this->source_dir)) {
             return false;
         }
-        if($output){
-            $styled = '<comment>Package "'.$this->package.'"</comment> deployed in <error>"/packages/' . $this->package.'"</error>';
+        if($output) {
+            $styled = '<comment>Package "' . $this->package . '"</comment> deployed in <error>"/packages/' . $this->package . '"</error>';
             $output->writeln($styled);
         }
-        \File::copyDirectory($this->source_dir, public_path('packages/' . $this->package));
+        \File::copyDirectory(base_path('vendor/' . $this->package . '/' . $this->source_dir), public_path('packages/' . $this->package));
+
         return true;
     }
 

@@ -24,6 +24,10 @@ class Manager {
         if(self::$is_init) {
             return true;
         }
+        $static_files = app_path('Http/staticfiles.php');
+        if(file_exists($static_files)) {
+            require_once $static_files;
+        }
         foreach(self::$packages as $package_name => $package) {
             /** @var $package Package */
             $package->on();
