@@ -166,7 +166,7 @@ class Css extends File {
         /* если не надо собирать файлы в один */
         if (!config('larakit.laravel5-larakit-staticfiles.css.external.build', false)) {
             foreach ($this->css_external as $css => $_css) {
-                $css_code .= $this->getLink($css, Arr::get($_css, 'media'), Arr::get($_css, 'condition')) . PHP_EOL;
+                $css_code .= '        '.$this->getLink($css, Arr::get($_css, 'media'), Arr::get($_css, 'condition')) . PHP_EOL;
             }
         } else {
             $build     = [];
@@ -216,7 +216,7 @@ class Css extends File {
 
                     $this->save($build_file, implode('', $build));
                 }
-                $css_code .= $this->getLink($this->buildUrl($build_name), $media, $condition) . "\n        ";
+                $css_code .= $this->getLink($this->buildUrl($build_name), $media, $condition) . "\n";
             }
         }
         return $css_code;
@@ -245,9 +245,9 @@ class Css extends File {
             $_css = [];
             $css  = $this->getExternal();
             if ($css) {
-                $_css[] = str_replace(PHP_EOL, "    " . PHP_EOL, $css);
+                $_css[] = str_replace(PHP_EOL, "        " . PHP_EOL, $css);
             }
-            $css_inline = trim($this->getInline(true));
+            $css_inline = ($this->getInline(true));
             if ($css_inline) {
                 $css_inline = str_replace(PHP_EOL, PHP_EOL . "    ", $css_inline);
                 $_css[]     = "        " . str_replace(PHP_EOL, PHP_EOL . "    ", $css_inline);
