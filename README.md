@@ -2,7 +2,8 @@
 [![Latest Stable Version](https://poser.pugx.org/larakit/lk-staticfiles/v/stable.svg)](https://packagist.org/packages/larakit/lk-staticfiles)
 [![Latest Unstable Version](https://poser.pugx.org/larakit/lk-staticfiles/v/unstable.svg)](https://packagist.org/packages/larakit/lk-staticfiles)
 [![License](https://poser.pugx.org/larakit/lk-staticfiles/license.svg)](https://packagist.org/packages/larakit/lk-staticfiles)
-
+[![License](https://poser.pugx.org/larakit/lk-staticfiles/license.svg)](https://packagist.org/packages/larakit/lk-staticfiles)
+[![Gitter](https://badges.gitter.im/larakit/lk-staticfiles.svg)](https://gitter.im/larakit/lk-staticfiles?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 #lk-staticfiles!
 Библиотека для Laravel для управления статикой (сборка в один файл, сжатие JS/CSS, добавление хэша в URL для сброса кэша браузера)
 
