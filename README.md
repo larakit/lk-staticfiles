@@ -4,6 +4,8 @@
 [![License](https://poser.pugx.org/larakit/lk-staticfiles/license.svg)](https://packagist.org/packages/larakit/lk-staticfiles)
 
 #lk-staticfiles!
+
+[![Join the chat at https://gitter.im/larakit/lk-staticfiles](https://badges.gitter.im/larakit/lk-staticfiles.svg)](https://gitter.im/larakit/lk-staticfiles?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Библиотека для Laravel для управления статикой (сборка в один файл, сжатие JS/CSS, добавление хэша в URL для сброса кэша браузера)
 
 ##Step 1 
