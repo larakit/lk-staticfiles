@@ -253,6 +253,7 @@ class Package {
                 Manager::package($require)
                        ->on();
             }
+
             //затем подключим CSS
             foreach($this->css as $url => $item) {
                 $condition = Arr::get($item, 'condition', null);
@@ -324,10 +325,7 @@ class Package {
      * @return bool
      */
     function deploy($output = null) {
-        if(!$this->source_dir) {
-            return false;
-        }
-        if(!is_dir($this->source_dir)) {
+        if(is_null($this->source_dir)) {
             return false;
         }
         if($output) {
