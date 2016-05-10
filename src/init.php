@@ -12,7 +12,7 @@ if (!function_exists('larajs')) {
 }
 
 //регистрируем сервис-провайдер
-Larakit\SPA::register_provider('Larakit\StaticFiles\LarakitServiceProvider');
+Larakit\Boot::register_provider('Larakit\StaticFiles\LarakitServiceProvider');
 if (class_exists('Larakit\Twig')) {
     Larakit\Twig::register_function('larajs', function(){
         return \Larakit\StaticFiles\Js::instance();
