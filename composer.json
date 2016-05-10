@@ -29,6 +29,5 @@
         "files": [
             "src/init.php"
         ]
-    },
-    "minimum-stability": "dev"
+    }
 }
