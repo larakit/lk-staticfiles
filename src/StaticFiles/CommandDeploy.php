@@ -35,7 +35,7 @@ class CommandDeploy extends \Illuminate\Console\Command {
         Manager::deploy($this->getOutput());
         $this->info('Статика успешно выложена!');
         //обновим хэш
-        $file_config      = config_path('larakit/laravel5-larakit-staticfiles/version.php');
+        $file_config      = config_path('larakit/lk-staticfiles/version.php');
         if(!file_exists(dirname($file_config))){
             mkdir(dirname($file_config),0777, true);
         }

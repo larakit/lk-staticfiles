@@ -61,7 +61,7 @@ class Js extends File {
             return $this;
         }
         //если начинается с / значит надо в урл добавить хост
-        $host = config('larakit.laravel5-larakit-staticfiles.host');
+        $host = config('larakit.lk-staticfiles.host');
         if(mb_strpos($js, '/') === 0 && mb_strpos($js, '/', 1) !== 1) {
             $js = $host . $js;
         }
@@ -145,7 +145,7 @@ class Js extends File {
     function getLink($js, $condition = null) {
         $sign = (mb_strpos($js, '?') !== false) ? '&' : '?';
 
-        return ($condition ? '<!--[' . $condition . ']>' : '') . '<script type="text/javascript" ' . "" . 'src="' . $js . $sign . config('larakit.laravel5-larakit-staticfiles.version') . '"></script>' . ($condition ? '<![endif]-->' : '');
+        return ($condition ? '<!--[' . $condition . ']>' : '') . '<script type="text/javascript" ' . "" . 'src="' . $js . $sign . config('larakit.lk-staticfiles.version') . '"></script>' . ($condition ? '<![endif]-->' : '');
     }
 
     function getNoscript() {
@@ -169,7 +169,7 @@ class Js extends File {
             return '';
         }
         //если не надо собирать все в один билд-файл
-        if(!config('larakit.laravel5-larakit-staticfiles.js.external.build')) {
+        if(!config('larakit.lk-staticfiles.js.external.build')) {
             $js_code = '';
             foreach($this->js_external as $js => $_js) {
                 $condition = Arr::get($_js, 'condition');
@@ -212,7 +212,7 @@ class Js extends File {
                             }
                             $_js = file_get_contents($url);
                         }
-                        $_js     = $this->prepare($_js, (mb_strpos($url, '.min.') === false) && config('larakit.laravel5-larakit-staticfiles.js.external.min'));
+                        $_js     = $this->prepare($_js, (mb_strpos($url, '.min.') === false) && config('larakit.lk-staticfiles.js.external.min'));
                         $build[] = "/**********************************************************************" . PHP_EOL;
                         $build[] = '* ' . $url . PHP_EOL;
                         $build[] = "**********************************************************************/" . PHP_EOL;
@@ -260,13 +260,13 @@ class Js extends File {
         }
         $js_code = '';
         foreach($this->js_inline as $js) {
-            $js_code .= $this->prepare($js, config('larakit.laravel5-larakit-staticfiles.js.inline.min')) . PHP_EOL;
+            $js_code .= $this->prepare($js, config('larakit.lk-staticfiles.js.inline.min')) . PHP_EOL;
         }
         $js_code = trim($js_code);
         if(!$js_code) {
             return '';
         }
-        if(!config('larakit.laravel5-larakit-staticfiles.js.inline.build')) {
+        if(!config('larakit.lk-staticfiles.js.inline.build')) {
             return '<script type="text/javascript">' . PHP_EOL . $js_code . PHP_EOL . '</script>';
         }
         //если требуется собирать инлайн скрипты в один внешний файл
@@ -293,8 +293,8 @@ class Js extends File {
         }
         $js = str_replace(PHP_EOL, PHP_EOL . "\t", $js);
         $js = 'jQuery(document).ready(function(){' . PHP_EOL . "\t" . $js . PHP_EOL . '});';
-        $js = $this->prepare($js, config('larakit.laravel5-larakit-staticfiles.js.onload.min'));
-        if(!config('larakit.laravel5-larakit-staticfiles.js.onload.build')) {
+        $js = $this->prepare($js, config('larakit.lk-staticfiles.js.onload.min'));
+        if(!config('larakit.lk-staticfiles.js.onload.build')) {
             $ret = '<script type="text/javascript">' . PHP_EOL . $js . PHP_EOL . '</script>';
 
             return $ret;

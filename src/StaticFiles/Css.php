@@ -39,7 +39,7 @@ class Css extends File {
     function add($css_file, $media = null, $condition = null, $no_build = false) {
         if (!$css_file)
             return $this;
-        $host = config('larakit.laravel5-larakit-staticfiles.host');
+        $host = config('larakit.lk-staticfiles.host');
         if (mb_strpos($css_file, '/') === 0 && mb_strpos($css_file, '/', 1) !== 1) {
             $css_file = $host . $css_file;
         }
@@ -105,8 +105,8 @@ class Css extends File {
             return '';
         }
         $css_inline = (implode(PHP_EOL, $this->css_inline));
-        $css_inline = $this->prepare($css_inline, config('larakit.laravel5-larakit-staticfiles.css.inline.min', false));
-        if (config('larakit.laravel5-larakit-staticfiles.css.inline.build', false)) {
+        $css_inline = $this->prepare($css_inline, config('larakit.lk-staticfiles.css.inline.min', false));
+        if (config('larakit.lk-staticfiles.css.inline.build', false)) {
             $build_name = $this->makeFileName($css_inline, 'css/inline', 'css');
             $build_file = $this->buildFile($build_name);
             if (!file_exists($build_file)) {
@@ -164,7 +164,7 @@ class Css extends File {
         }
         $css_code = '';
         /* если не надо собирать файлы в один */
-        if (!config('larakit.laravel5-larakit-staticfiles.css.external.build', false)) {
+        if (!config('larakit.lk-staticfiles.css.external.build', false)) {
             foreach ($this->css_external as $css => $_css) {
                 $css_code .= '        '.$this->getLink($css, Arr::get($_css, 'media'), Arr::get($_css, 'condition')) . PHP_EOL;
             }
@@ -228,7 +228,7 @@ class Css extends File {
         } else {
             $attr = [];
         }
-        $hash      = config('larakit.laravel5-larakit-staticfiles.version');
+        $hash      = config('larakit.lk-staticfiles.version');
         $sign      = (mb_strpos($css, '?') !== false) ? '&' : '?';
         $need_hash = (mb_strpos($css, $hash) === false);
         return ($condition ? '<!--[' . $condition . ']>' : '') . '<link' . ($media ? ' media="' . $media . '"' : '') . ' type="text/css" rel="stylesheet" href="' . $css . ($is_need_hash && $need_hash ? $sign . $hash : '') . '" />' . ($condition ? '<![endif]-->' : '');

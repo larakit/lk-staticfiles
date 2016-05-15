@@ -27,11 +27,11 @@ class File {
     }
 
     protected function buildFile($file) {
-        return config('larakit.laravel5-larakit-staticfiles.build_dir') . config('larakit.laravel5-larakit-staticfiles.version') . '/' . $file;
+        return config('larakit.lk-staticfiles.build_dir') . config('larakit.lk-staticfiles.version') . '/' . $file;
     }
 
     protected function buildUrl($file) {
-        return config('larakit.laravel5-larakit-staticfiles.host') . config('larakit.laravel5-larakit-staticfiles.build_url') . config('larakit.laravel5-larakit-staticfiles.version') . '/' . $file;
+        return config('larakit.lk-staticfiles.host') . config('larakit.lk-staticfiles.build_url') . config('larakit.lk-staticfiles.version') . '/' . $file;
     }
 
 
