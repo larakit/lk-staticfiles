@@ -105,7 +105,7 @@ class Css extends File {
             return '';
         }
         $css_inline = (implode(PHP_EOL, $this->css_inline));
-        $css_inline = $this->prepare($css_inline, config('larakit.lk-staticfiles.css.inline.min', false));
+        $css_inline = $this->prepare($css_inline, config('larakit.lk-staticfiles.css.inline.min'));
         if (config('larakit.lk-staticfiles.css.inline.build', false)) {
             $build_name = $this->makeFileName($css_inline, 'css/inline', 'css');
             $build_file = $this->buildFile($build_name);
@@ -184,9 +184,11 @@ class Css extends File {
             }
             foreach ($no_builds as $key => $css) {
                 list($condition, $media) = explode('|', $key);
+                $css_code .='<!-- [no build] -->'.PHP_EOL;
                 foreach ($css as $_css) {
-                    $css_code .= $this->getLink($_css, $media, $condition, false);
+                    $css_code .= $this->getLink($_css, $media, $condition, false).PHP_EOL;
                 }
+                $css_code .='<!-- [/no build] -->'.PHP_EOL;
             }
             foreach ($build as $key => $css) {
                 list($condition, $media) = explode('|', $key);
@@ -204,7 +206,7 @@ class Css extends File {
                     $build = [];
                     foreach ($css as $url) {
                         $_css    = $this->replaceRelativePath($url);
-                        $_css    = $this->prepare($_css, (mb_strpos($url, '.min.') === false));
+                        $_css    = $this->prepare($_css, config('larakit.lk-staticfiles.css.external.min') || (mb_strpos($url, '.min.') !== false));
                         $build[] = "/**********************************************************************" . PHP_EOL;
                         $build[] = '* ' . $url . PHP_EOL;
                         $build[] = "**********************************************************************/" . PHP_EOL;

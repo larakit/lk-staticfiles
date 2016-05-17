@@ -142,10 +142,12 @@ class Js extends File {
         }
     }
 
-    function getLink($js, $condition = null) {
+    function getLink($js, $condition = null, $is_need_hash = true) {
         $sign = (mb_strpos($js, '?') !== false) ? '&' : '?';
+        $hash      = config('larakit.lk-staticfiles.version');
+        $need_hash = (mb_strpos($js, $hash) === false);
 
-        return ($condition ? '<!--[' . $condition . ']>' : '') . '<script type="text/javascript" ' . "" . 'src="' . $js . $sign . config('larakit.lk-staticfiles.version') . '"></script>' . ($condition ? '<![endif]-->' : '');
+        return ($condition ? '<!--[' . $condition . ']>' : '') . '<script type="text/javascript" ' . "" . 'src="' . $js . ($is_need_hash && $need_hash ? $sign . $hash : '') . '"></script>' . ($condition ? '<![endif]-->' : '');
     }
 
     function getNoscript() {
@@ -191,9 +193,11 @@ class Js extends File {
                 }
             }
             foreach($no_build as $condition => $jses) {
+                $js_code .='<!-- [no build] -->'.PHP_EOL;
                 foreach($jses as $url) {
-                    $js_code .= $this->getLink($url, $condition) . "<!-- no build -->" . PHP_EOL;
+                    $js_code .= $this->getLink($url, $condition, false) . PHP_EOL;
                 }
+                $js_code .='<!-- [/no build] -->'.PHP_EOL;
             }
             foreach($build as $condition => $js) {
                 $build_name = $this->makeFileName($this->js_external, 'js/external' . ($condition ? '/' . $condition : ''), 'js');
@@ -212,7 +216,7 @@ class Js extends File {
                             }
                             $_js = file_get_contents($url);
                         }
-                        $_js     = $this->prepare($_js, (mb_strpos($url, '.min.') === false) && config('larakit.lk-staticfiles.js.external.min'));
+                        $_js     = $this->prepare($_js, (mb_strpos($url, '.min.') !== false) || config('larakit.lk-staticfiles.js.external.min'));
                         $build[] = "/**********************************************************************" . PHP_EOL;
                         $build[] = '* ' . $url . PHP_EOL;
                         $build[] = "**********************************************************************/" . PHP_EOL;
@@ -271,7 +275,7 @@ class Js extends File {
         }
         //если требуется собирать инлайн скрипты в один внешний файл
         $build_name = $this->makeFileName($this->js_inline, 'js/inline', 'js');
-        $this->requireBuild($build_name, $js);
+        $this->requireBuild($build_name, $js_code);
 
         return $this->getLink($this->buildUrl($build_name)) . PHP_EOL;
     }
