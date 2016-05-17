@@ -7,14 +7,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Package {
 
-    protected $css        = [];
-    protected $js         = [];
-    protected $require    = [];
+    protected $css             = [];
+    protected $deferred_scopes = [];
+    protected $js              = [];
+    protected $require         = [];
     protected $package;
-    protected $include    = [];
-    protected $exclude    = [];
-    protected $is_used    = false;
-    protected $source_dir = null;
+    protected $include         = [];
+    protected $exclude         = [];
+    protected $is_used         = false;
+    protected $source_dir      = null;
 
     /**
      * Список именованных наборов
@@ -33,7 +34,10 @@ class Package {
      *
      * @return $this
      */
-    function usePackage($package) {
+    function usePackage($package, $scopes = []) {
+        foreach((array)$scopes as $scope) {
+            Manager::package($package)->deferredScope($scope);
+        }
         $this->require[$package] = $package;
 
         return $this;
@@ -233,6 +237,10 @@ class Package {
         return $this;
     }
 
+    function deferredScope($scope) {
+        $this->deferred_scopes [$scope] = $scope;
+    }
+
     /**
      * Включение пакета с учетом правил использования include/exclude
      * @return bool
@@ -249,9 +257,12 @@ class Package {
         } else {
             // подключаем
             //сперва подключим на страницу зависимости
-            foreach((array) $this->require as $require) {
-                Manager::package($require)
-                       ->on();
+            foreach((array) $this->require as $require => $scopes) {
+                Manager::package($require)->on();
+            }
+
+            foreach($this->deferred_scopes as $scope){
+                $this->scope($scope);
             }
 
             //затем подключим CSS
@@ -260,14 +271,14 @@ class Package {
                 $media     = Arr::get($item, 'media', null);
                 $no_build  = (bool) Arr::get($item, 'no_build', false);
                 Css::instance()
-                   ->add($url, $media, $condition, $no_build);
+                    ->add($url, $media, $condition, $no_build);
             }
             //затем подключим JS
             foreach($this->js as $url => $item) {
                 $condition = Arr::get($item, 'condition', null);
                 $no_build  = (bool) Arr::get($item, 'no_build', false);
                 Js::instance()
-                  ->add($url, $condition, $no_build);
+                    ->add($url, $condition, $no_build);
             }
         }
         $this->is_used = true;
