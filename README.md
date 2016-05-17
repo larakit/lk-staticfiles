@@ -15,15 +15,17 @@
 ###1. Файл с правилами подключения статики
 
 Для порядка добавим подключаемые стили и скрипты вынесем в отдельный файл, например 
-~~~
+~~~bash
 ./app/Http/staticfiles.php
 ~~~
 
 Затем в файле 
-~~~
+~~~bash
 ./app/Http/routes.php
 ~~~
+
 подключим его 
+
 ~~~php
 <?php
 
@@ -33,23 +35,33 @@ Route::get('/', function () {
 
 require app_path('Http/staticfiles.php');
 ~~~
+
 ###2. Установим пакет
-~~~
+
+~~~bash
 $composer require larakit/lk-staticfiles
 ~~~
+
 Далее нужно либо воспользоваться рекомендациями пакета https://github.com/larakit/lk-boot и произвести две правки
-~~~
+
+~~~bash
 ./app/Http/Kernel.php
 ~~~
+
 и 
-~~~
+
+~~~bash
 ./config/app.php
 ~~~
+
 либо руками зарегистрировать в 
-~~~
+
+~~~bash
 ./config/app.php
 ~~~
+
 сервис-провайдер "Larakit\StaticFiles\LarakitServiceProvider"
+
 ~~~php
 <?php
 
@@ -62,26 +74,29 @@ return [
    ...
 ];
 ~~
+
 Проверим что все хорошо, для этого наберем в консоли команду:
-~~~
-berdnikov@redak34:/mnt/D/domains/staticfiles$ php artisan | grep larastatic
-~~~
-если вы видите вывод:
-~~~
- larastatic
+
+~~~bash
+$php artisan | grep larastatic
+larastatic
   larastatic:deploy    Выложить статику из зарегистрированных пакетов в DOCUMENT_ROOT
 ~~~
+
 поздравляю, пакет был корректно установлен и инициализирован!
 
 ###3. Заполним staticfiles.php инструкциями по подключению CSS
 
 Для начала посмотрим содержимое по-умолчанию главной страницы после установки фреймворка 
+
 <img src="https://habrastorage.org/files/08c/17e/58c/08c17e58cecd427d9f9b27b3b49a90b2.png" />
+
 и постараемся воспроизвести его при помощи данного пакета
-~~~
+
+~~~php
 <?php
 \Larakit\StaticFiles\Css::instance()
-    ->add('"https://fonts.googleapis.com/css?family=Lato:100')
+    ->add('https://fonts.googleapis.com/css?family=Lato:100')
     ->addInline('
         html, body {
             height: 100%;
@@ -114,6 +129,7 @@ berdnikov@redak34:/mnt/D/domains/staticfiles$ php artisan | grep larastatic
 ~~~
 
 Чтобы добавленные стили и скрипты вставились во все страницы сайта надо в вашем шаблоне прописать вызов
+
 <img src="https://habrastorage.org/files/5e5/11b/8c0/5e511b8c064b459485ad9ebbb665495a.png" />
 
 Получилось!
@@ -156,11 +172,12 @@ berdnikov@redak34:/mnt/D/domains/staticfiles$ php artisan | grep larastatic
 - при отключенном javascript показывался текст "Упс, включи JS!"
 
 Напомню, все это мы делаем в файле
-~~~
+~~~bash
 ./app/Http/staticfiles.php
 ~~~
 Итак, дополним его согласно новым требованиям
-~~~
+
+~~~php
 \Larakit\StaticFiles\Js::instance()
     //подключим jQuery
     ->add('https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js')
@@ -224,12 +241,15 @@ berdnikov@redak34:/mnt/D/domains/staticfiles$ php artisan | grep larastatic
 3) использование статики из vendor-пакетов или node_modules (требует выкладки в DOCUMENT_ROOT)
 
 Так вот для третьего пункта и существует команда, которая производит выкладку пакетов в директорию
-~~~
+
+~~~bash
 ./public/packages/...
 ~~~
+
 запускается она так:
-~~~
-php artisan latastatic:deploy 
+
+~~~bash
+$php artisan larastatic:deploy 
 ~~~
 и после ее запуска будет произведена выкладка статики для каждого зарегистрированного пакета
 
@@ -256,7 +276,9 @@ php artisan latastatic:deploy
 Для режима разработки отключите сборку билдов, а на продакшн-сервере включите. <br />
 Этим вы значительно уменьшите количество выполняемых к серверу запросов для получения статики.<br />
 Для изменения дефолтных настроек модуля необходимо опубликовать их:
+
+~~~bash
+$php artisan config:publish larakit/lk-staticfiles
 ~~~
-php artisan config:publish larakit/lk-staticfiles
-~~~
+
 Настройки окажутся окажутся в директории **app/config/packages/larakit/lk-staticfiles/** и станут доступными для переопределения.
