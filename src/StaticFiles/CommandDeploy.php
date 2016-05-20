@@ -8,7 +8,7 @@ class CommandDeploy extends \Illuminate\Console\Command {
      *
      * @var string
      */
-    protected $name = 'larastatic:deploy';
+    protected $name = 'larakit:sf:deploy';
 
     /**
      * The console command description.
