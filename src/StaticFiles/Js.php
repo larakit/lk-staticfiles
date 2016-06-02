@@ -6,18 +6,18 @@ use \Illuminate\Support\Arr;
 class Js extends File {
 
     /* внешние подключаемые скрипты */
-    public $js_external = [];
+    protected $js_external = [];
     /* инлайн скрипты */
-    public $js_inline = [];
+    protected $js_inline = [];
     /* скрипты, которые должны быть выполнены при загрузке странице */
-    public $js_onload = [];
+    protected $js_onload = [];
     /* вставки в <noscript> */
-    public $noscript = [];
+    protected $noscript = [];
 
     function clearAll() {
         return $this->clearExternal()
-                    ->clearInline()
-                    ->clearOnload();
+            ->clearInline()
+            ->clearOnload();
     }
 
     function clearExternal() {
@@ -143,7 +143,7 @@ class Js extends File {
     }
 
     function getLink($js, $condition = null, $is_need_hash = true) {
-        $sign = (mb_strpos($js, '?') !== false) ? '&' : '?';
+        $sign      = (mb_strpos($js, '?') !== false) ? '&' : '?';
         $hash      = config('larakit.lk-staticfiles.version');
         $need_hash = (mb_strpos($js, $hash) === false);
 
@@ -152,13 +152,14 @@ class Js extends File {
 
     function getNoscript() {
         $ret = [];
-        if(count($this->noscript)){
+        if(count($this->noscript)) {
             $ret[] = '<noscript>';
-            foreach($this->noscript as $noscript){
+            foreach($this->noscript as $noscript) {
                 $ret[] = $noscript;
             }
             $ret[] = '</noscript>';
         }
+
         return implode(PHP_EOL, $ret);
     }
 
@@ -166,7 +167,10 @@ class Js extends File {
      * Только внешние скрипты
      * @return string
      */
-    function getExternal() {
+    function getExternal($as_html = true) {
+        if(!$as_html) {
+            return $this->js_external;
+        }
         if(!count($this->js_external)) {
             return '';
         }
@@ -193,11 +197,11 @@ class Js extends File {
                 }
             }
             foreach($no_build as $condition => $jses) {
-                $js_code .='<!-- [no build] -->'.PHP_EOL;
+                $js_code .= '<!-- [no build] -->' . PHP_EOL;
                 foreach($jses as $url) {
                     $js_code .= $this->getLink($url, $condition, false) . PHP_EOL;
                 }
-                $js_code .='<!-- [/no build] -->'.PHP_EOL;
+                $js_code .= '<!-- [/no build] -->' . PHP_EOL;
             }
             foreach($build as $condition => $js) {
                 $build_name = $this->makeFileName($this->js_external, 'js/external' . ($condition ? '/' . $condition : ''), 'js');
