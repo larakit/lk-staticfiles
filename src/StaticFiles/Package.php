@@ -35,13 +35,20 @@ class Package {
      * @return $this
      */
     function usePackage($package, $scopes = []) {
-        foreach((array)$scopes as $scope) {
+        foreach((array) $scopes as $scope) {
             Manager::package($package)->deferredScope($scope);
         }
         $this->require[$package] = $package;
 
         return $this;
     }
+
+    function ngModule($name) {
+        static::$ng_modules[$name] = $name;
+        return $this;
+    }
+
+    static $ng_modules = [];
 
     /**
      * Добавить внешний JS
@@ -261,7 +268,7 @@ class Package {
                 Manager::package($require)->on();
             }
 
-            foreach($this->deferred_scopes as $scope){
+            foreach($this->deferred_scopes as $scope) {
                 $this->scope($scope);
             }
 
