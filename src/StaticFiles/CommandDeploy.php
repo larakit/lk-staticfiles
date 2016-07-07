@@ -32,6 +32,9 @@ class CommandDeploy extends \Illuminate\Console\Command {
      * @return mixed
      */
     public function handle() {
+        $this->info(str_repeat('#',80));
+        $this->info('# larakit:sf:deploy');
+        $this->info(str_repeat('#',80));
         Manager::deploy($this->getOutput());
         $this->info('Статика успешно выложена!');
         //обновим хэш
