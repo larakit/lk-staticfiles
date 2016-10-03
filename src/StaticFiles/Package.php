@@ -3,7 +3,6 @@
 namespace Larakit\StaticFiles;
 
 use Illuminate\Support\Arr;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class Package {
 
@@ -45,6 +44,7 @@ class Package {
 
     function ngModule($name) {
         static::$ng_modules[$name] = $name;
+
         return $this;
     }
 
@@ -278,14 +278,14 @@ class Package {
                 $media     = Arr::get($item, 'media', null);
                 $no_build  = (bool) Arr::get($item, 'no_build', false);
                 Css::instance()
-                    ->add($url, $media, $condition, $no_build);
+                   ->add($url, $media, $condition, $no_build);
             }
             //затем подключим JS
             foreach($this->js as $url => $item) {
                 $condition = Arr::get($item, 'condition', null);
                 $no_build  = (bool) Arr::get($item, 'no_build', false);
                 Js::instance()
-                    ->add($url, $condition, $no_build);
+                  ->add($url, $condition, $no_build);
             }
         }
         $this->is_used = true;

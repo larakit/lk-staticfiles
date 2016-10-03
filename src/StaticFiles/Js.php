@@ -1,7 +1,7 @@
 <?php
 namespace Larakit\StaticFiles;
 
-use \Illuminate\Support\Arr;
+use Illuminate\Support\Arr;
 
 class Js extends File {
 
@@ -16,8 +16,8 @@ class Js extends File {
 
     function clearAll() {
         return $this->clearExternal()
-            ->clearInline()
-            ->clearOnload();
+                    ->clearInline()
+                    ->clearOnload();
     }
 
     function clearExternal() {

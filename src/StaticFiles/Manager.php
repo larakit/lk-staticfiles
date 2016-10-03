@@ -7,6 +7,10 @@ class Manager {
     static protected $packages = [];
     static protected $is_init  = false;
 
+    static function packages() {
+        return self::$packages;
+    }
+
     /**
      * @param      $package
      *
