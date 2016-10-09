@@ -25,6 +25,7 @@ class LarakitServiceProvider extends ServiceProvider {
         $this->mergeConfigFrom(__DIR__ . '/../config/css.php', 'larakit.lk-staticfiles.css');
         $this->commands([
             CommandDeploy::class,
+            CommandConditions::class,
         ]);
     }
 

@@ -186,6 +186,14 @@ class Package {
         return $this;
     }
 
+    function getExclude() {
+        return $this->exclude;
+    }
+
+    function getInclude() {
+        return $this->include;
+    }
+
     /**
      * Перезаписать список роутов, где пакет должен быть выключен
      *
