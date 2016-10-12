@@ -40,6 +40,20 @@ class Manager {
         return (self::$is_init = true);
     }
 
+    static function conditions($packages, $includes = null, $excludes = null) {
+        foreach($packages as $package) {
+            $p        = self::package($package);
+            $includes = (array) $includes;
+            $excludes = (array) $excludes;
+            foreach($includes as $inc) {
+                $p->addInclude($inc);
+            }
+            foreach($excludes as $exc) {
+                $p->addExclude($exc);
+            }
+        }
+    }
+
     static function deploy($output = null) {
         foreach(self::$packages as $package_name => $package) {
             /** @var $package Package */

@@ -32,28 +32,24 @@ class CommandConditions extends \Illuminate\Console\Command {
      * @return mixed
      */
     public function handle() {
+        $static_files = app_path('Http/staticfiles.php');
+        if(file_exists($static_files)) {
+            require_once $static_files;
+        }
         $header = [
             'Package',
             'Exclude',
             'Include',
+            'Required',
         ];
         $rows   = [];
         foreach(\Larakit\StaticFiles\Manager::packages() as $package_name => $p) {
-            /** @var Package $p */
-            foreach($p->getExclude() as $e) {
-                $rows[] = [
-                    $package_name,
-                    $e,
-                    '',
-                ];
-            }
-            foreach($p->getInclude() as $i) {
-                $rows[] = [
-                    $package_name,
-                    '',
-                    $i,
-                ];
-            }
+            $rows[] = [
+                $package_name,
+                implode(', ', $p->getExclude()),
+                implode(', ', $p->getInclude()),
+                implode(', ', $p->getRequired()),
+            ];
         }
         $this->table($header, $rows);
     }

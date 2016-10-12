@@ -35,11 +35,16 @@ class Package {
      */
     function usePackage($package, $scopes = []) {
         foreach((array) $scopes as $scope) {
-            Manager::package($package)->deferredScope($scope);
+            Manager::package($package)
+                   ->deferredScope($scope);
         }
         $this->require[$package] = $package;
 
         return $this;
+    }
+
+    function getRequired() {
+        return array_keys($this->require);
     }
 
     function ngModule($name) {
@@ -269,11 +274,13 @@ class Package {
         $include = self::maxIs($this->include, $route);
         if($exclude > $include || true === $exclude) {
             // исключаем
-        } else {
+        }
+        else {
             // подключаем
             //сперва подключим на страницу зависимости
             foreach((array) $this->require as $require => $scopes) {
-                Manager::package($require)->on();
+                Manager::package($require)
+                       ->on();
             }
 
             foreach($this->deferred_scopes as $scope) {
