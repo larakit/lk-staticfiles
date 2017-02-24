@@ -32,6 +32,10 @@ class Manager {
         if(file_exists($static_files)) {
             require_once $static_files;
         }
+        $static_files = base_path('bootstrap/staticfiles.php');
+        if(file_exists($static_files)) {
+            require_once $static_files;
+        }
         foreach(self::$packages as $package_name => $package) {
             /** @var $package Package */
             $package->on();
