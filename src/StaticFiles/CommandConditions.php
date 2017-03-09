@@ -36,6 +36,11 @@ class CommandConditions extends \Illuminate\Console\Command {
         if(file_exists($static_files)) {
             require_once $static_files;
         }
+        $static_files = base_path('bootstrap/staticfiles.php');
+        if(file_exists($static_files)) {
+            require_once $static_files;
+        }
+        
         $header = [
             'Package',
             'Exclude',

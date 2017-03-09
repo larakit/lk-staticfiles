@@ -3,14 +3,14 @@
 namespace Larakit\StaticFiles;
 
 class Manager {
-
+    
     static protected $packages = [];
     static protected $is_init  = false;
-
+    
     static function packages() {
         return self::$packages;
     }
-
+    
     /**
      * @param      $package
      *
@@ -20,13 +20,18 @@ class Manager {
         if(!isset(self::$packages[$package])) {
             self::$packages[$package] = new Package($package);
         }
-
+        
         return self::$packages[$package];
     }
-
+    
     static function init() {
         if(self::$is_init) {
             return true;
+        }
+        $file_ng = public_path('!/angular-larakit.js');
+        if(file_exists(dirname($file_ng))) {
+            \Larakit\StaticFiles\Manager::package('angular-larakit')
+                ->js('/!/angular-larakit.js');
         }
         $static_files = app_path('Http/staticfiles.php');
         if(file_exists($static_files)) {
@@ -40,10 +45,10 @@ class Manager {
             /** @var $package Package */
             $package->on();
         }
-
+        
         return (self::$is_init = true);
     }
-
+    
     static function conditions($packages, $includes = null, $excludes = null) {
         foreach($packages as $package) {
             $p        = self::package($package);
@@ -57,7 +62,7 @@ class Manager {
             }
         }
     }
-
+    
     static function deploy($output = null) {
         foreach(self::$packages as $package_name => $package) {
             /** @var $package Package */
