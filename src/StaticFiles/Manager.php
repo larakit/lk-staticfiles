@@ -29,7 +29,7 @@ class Manager {
             return true;
         }
         $file_ng = public_path('!/angular-larakit.js');
-        if(file_exists(dirname($file_ng))) {
+        if(file_exists($file_ng)) {
             \Larakit\StaticFiles\Manager::package('angular-larakit')
                 ->js('/!/angular-larakit.js');
         }
