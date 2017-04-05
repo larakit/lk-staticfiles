@@ -8,14 +8,14 @@ class CommandConditions extends \Illuminate\Console\Command {
      *
      * @var string
      */
-    protected $name = 'larakit:sf';
+    protected $name = 'larakit:show:sf';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Посмотреть условия подключения JS/CSS';
+    protected $description = 'Показать условия подключения JS/CSS';
 
     /**
      * Create a new command instance.
