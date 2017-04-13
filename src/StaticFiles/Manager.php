@@ -28,11 +28,6 @@ class Manager {
         if(self::$is_init) {
             return true;
         }
-        $file_ng = public_path('!/angular-larakit.js');
-        if(file_exists($file_ng)) {
-            \Larakit\StaticFiles\Manager::package('angular-larakit')
-                ->js('/!/angular-larakit.js');
-        }
         $static_files = app_path('Http/staticfiles.php');
         if(file_exists($static_files)) {
             require_once $static_files;
@@ -49,7 +44,10 @@ class Manager {
         return (self::$is_init = true);
     }
     
-    static function conditions($packages, $includes = null, $excludes = null) {
+    static function conditions($packages=null, $includes = null, $excludes = null) {
+        if(is_null($packages)){
+            $packages = self::$packages;
+        }
         foreach($packages as $package) {
             $p        = self::package($package);
             $includes = (array) $includes;

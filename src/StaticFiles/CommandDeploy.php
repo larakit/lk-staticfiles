@@ -43,21 +43,6 @@ class CommandDeploy extends \Illuminate\Console\Command {
             mkdir(dirname($file_config), 0777, true);
         }
         file_put_contents($file_config, '<?php return "' . date('YmdHis') . '";');
-        //обновим ng-зависимости
-        if(count(Package::$ng_modules)) {
-            $file_ng = public_path('!/angular-larakit.js');
-            if(!file_exists(dirname($file_ng))) {
-                mkdir(dirname($file_ng), 0777, true);
-            }
-            $js = <<<JS
-(function () {
-angular
-.module('larakit', 
-%s);
-})();
-JS;
-            file_put_contents($file_ng, sprintf($js,json_encode(array_keys(Package::$ng_modules), JSON_PRETTY_PRINT)));
-        }
         $this->info('Обновлен хэш статики ');
 
     }

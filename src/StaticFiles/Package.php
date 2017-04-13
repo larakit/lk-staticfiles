@@ -47,13 +47,6 @@ class Package {
         return array_keys($this->require);
     }
 
-    function ngModule($name) {
-        static::$ng_modules[$name] = $name;
-
-        return $this;
-    }
-
-    static $ng_modules = [];
 
     /**
      * Добавить внешний JS
