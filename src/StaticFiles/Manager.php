@@ -44,10 +44,14 @@ class Manager {
         return (self::$is_init = true);
     }
     
-    static function conditions($packages=null, $includes = null, $excludes = null) {
-        if(is_null($packages)){
-            $packages = self::$packages;
+    static function conditions($packages = null, $includes = null, $excludes = null) {
+        if(is_null($packages)) {
+            $packages = array_keys(self::$packages);
         }
+        if(is_string($packages)) {
+            $packages = [$packages];
+        }
+        $packages = (array) $packages;
         foreach($packages as $package) {
             $p        = self::package($package);
             $includes = (array) $includes;

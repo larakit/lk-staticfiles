@@ -5,7 +5,7 @@ namespace Larakit\StaticFiles;
 use Illuminate\Support\Arr;
 
 class Package {
-
+    
     protected $css             = [];
     protected $deferred_scopes = [];
     protected $js              = [];
@@ -15,17 +15,18 @@ class Package {
     protected $exclude         = [];
     protected $is_used         = false;
     protected $source_dir      = null;
-
+    
     /**
      * Список именованных наборов
+     *
      * @var array
      */
     protected $scopes = [];
-
+    
     function __construct($package) {
         $this->package = $package;
     }
-
+    
     /**
      * Добавить пакет, от которого есть зависимость
      *
@@ -36,18 +37,17 @@ class Package {
     function usePackage($package, $scopes = []) {
         foreach((array) $scopes as $scope) {
             Manager::package($package)
-                   ->deferredScope($scope);
+                ->deferredScope($scope);
         }
         $this->require[$package] = $package;
-
+        
         return $this;
     }
-
+    
     function getRequired() {
         return array_keys($this->require);
     }
-
-
+    
     /**
      * Добавить внешний JS
      *
@@ -59,10 +59,10 @@ class Package {
      */
     function js($js, $condition = null, $no_build = false) {
         $this->js[$js] = compact('condition', 'no_build');
-
+        
         return $this;
     }
-
+    
     /**
      * Добавить внешний CSS
      *
@@ -75,10 +75,10 @@ class Package {
      */
     function css($css, $media = null, $condition = null, $no_build = false) {
         $this->css[$css] = compact('media', 'condition', 'no_build');
-
+        
         return $this;
     }
-
+    
     /**
      * Добавить JS из пакета
      *
@@ -91,7 +91,7 @@ class Package {
     function jsPackage($js, $condition = null, $no_build = false) {
         return $this->js('/packages/' . $this->package . '/' . $js, $condition, $no_build);
     }
-
+    
     /**
      * Добавить CSS из пакета
      *
@@ -105,7 +105,7 @@ class Package {
     function cssPackage($css, $media = null, $condition = null, $no_build = false) {
         return $this->css('/packages/' . $this->package . '/' . $css, $media, $condition, $no_build);
     }
-
+    
     /**
      * Добавить именованный набор внутри пакета
      *
@@ -120,10 +120,10 @@ class Package {
      */
     function scopeInit($scope, $js = [], $css = []) {
         $this->scopes[$scope] = compact('js', 'css');
-
+        
         return $this;
     }
-
+    
     /**
      * Подключить именованный набор
      *
@@ -144,32 +144,34 @@ class Package {
         foreach($scripts as $script) {
             $this->js($script);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Очистить список подключаемых CSS в пакете
      * для задания своего
+     *
      * @return $this
      */
     function clearCss() {
         $this->css = [];
-
+        
         return $this;
     }
-
+    
     /**
      * Очистить список подключаемых JS в пакете
      * для задания своего
+     *
      * @return $this
      */
     function clearJs() {
         $this->js = [];
-
+        
         return $this;
     }
-
+    
     /**
      * Установить поддиректорию внутри пакета (public/dist),
      * из которой надо сделать выкладку в /packages/<package>/*
@@ -180,18 +182,18 @@ class Package {
      */
     function setSourceDir($dir) {
         $this->source_dir = rtrim(rtrim($dir, '/'), '\\');
-
+        
         return $this;
     }
-
+    
     function getExclude() {
         return $this->exclude;
     }
-
+    
     function getInclude() {
         return $this->include;
     }
-
+    
     /**
      * Перезаписать список роутов, где пакет должен быть выключен
      *
@@ -201,10 +203,10 @@ class Package {
      */
     function setExclude($exclude) {
         $this->exclude = (array) $exclude;
-
+        
         return $this;
     }
-
+    
     /**
      * Добавить список роутов, где пакет должен быть выключен
      *
@@ -217,10 +219,10 @@ class Package {
         foreach($exclude as $v) {
             $this->exclude = array_merge($this->exclude, (array) $v);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Перезаписать список роутов, где пакет должен быть включен
      *
@@ -230,10 +232,10 @@ class Package {
      */
     function setInclude($include) {
         $this->include = (array) $include;
-
+        
         return $this;
     }
-
+    
     /**
      * Добавить список роутов, где пакет должен быть включен
      *
@@ -246,16 +248,17 @@ class Package {
         foreach($include as $v) {
             $this->include = array_merge($this->include, (array) $v);
         }
-
+        
         return $this;
     }
-
+    
     function deferredScope($scope) {
         $this->deferred_scopes [$scope] = $scope;
     }
-
+    
     /**
      * Включение пакета с учетом правил использования include/exclude
+     *
      * @return bool
      */
     function on() {
@@ -267,40 +270,39 @@ class Package {
         $include = self::maxIs($this->include, $route);
         if($exclude > $include || true === $exclude) {
             // исключаем
-        }
-        else {
+        } else {
             // подключаем
             //сперва подключим на страницу зависимости
             foreach((array) $this->require as $require => $scopes) {
                 Manager::package($require)
-                       ->on();
+                    ->on();
             }
-
+            
             foreach($this->deferred_scopes as $scope) {
                 $this->scope($scope);
             }
-
+            
             //затем подключим CSS
             foreach($this->css as $url => $item) {
                 $condition = Arr::get($item, 'condition', null);
                 $media     = Arr::get($item, 'media', null);
                 $no_build  = (bool) Arr::get($item, 'no_build', false);
                 Css::instance()
-                   ->add($url, $media, $condition, $no_build);
+                    ->add($url, $media, $condition, $no_build);
             }
             //затем подключим JS
             foreach($this->js as $url => $item) {
                 $condition = Arr::get($item, 'condition', null);
                 $no_build  = (bool) Arr::get($item, 'no_build', false);
                 Js::instance()
-                  ->add($url, $condition, $no_build);
+                    ->add($url, $condition, $no_build);
             }
         }
         $this->is_used = true;
-
+        
         return true;
     }
-
+    
     /**
      * @param $input_array
      * @param $search
@@ -316,10 +318,10 @@ class Package {
             }
             $ret = max($is, $ret);
         }
-
+        
         return $ret;
     }
-
+    
     /**
      * @param $search
      * @param $current
@@ -333,18 +335,18 @@ class Package {
         if('*' == $search) {
             return 1;
         }
-
+        
         $pattern = preg_quote($search, '#');
         $pattern = str_replace('\*', '.*', $pattern) . '\z';
         $match   = (bool) preg_match('#^' . $pattern . '#', $current);
         if($match) {
             return mb_strlen($search);
         }
-
+        
         return false;
-
+        
     }
-
+    
     /**
      * Выкладка пакета
      *
@@ -359,8 +361,39 @@ class Package {
             $output->writeln($styled);
         }
         \File::copyDirectory(base_path('vendor/' . $this->package . '/' . $this->source_dir), public_path('packages/' . $this->package));
-
+        
         return true;
     }
-
+    
+    function export() {
+        $ret   = [];
+        $ret[] = '\Larakit\StaticFiles\Manager::package(\'' . $this->package . '\')';
+        // подключаем
+        //сперва подключим на страницу зависимости
+        foreach((array) $this->require as $require => $scopes) {
+            $ret[] = '    ->usePackage(\'' . $require . '\')';
+        }
+        //затем подключим CSS
+        foreach($this->css as $url => $item) {
+            $condition = Arr::get($item, 'condition', null);
+            $condition = $condition ? '\'' . $condition . '\'' : 'null';
+            $media     = Arr::get($item, 'media', null);
+            $media     = $media ? '\'' . $media . '\'' : 'null';
+            $no_build  = (bool) Arr::get($item, 'no_build', false);
+            $no_build  = $no_build ? 'true' : 'false';
+            $ret[]     = '    ->css(\'' . $url . '\', ' . $media . ', ' . $condition . ', ' . $no_build . ')';
+        }
+        //затем подключим JS
+        foreach($this->js as $url => $item) {
+            $condition = Arr::get($item, 'condition', null);
+            $condition = $condition ? '\'' . $condition . '\'' : 'null';
+            $no_build  = (bool) Arr::get($item, 'no_build', false);
+            $no_build  = $no_build ? 'true' : 'false';
+            $ret[]     = '    ->js(\'' . $url . '\', ' . $condition . ', ' . $no_build . ')';
+        }
+        $ret[] = ';';
+        
+        return implode(PHP_EOL, $ret);
+    }
+    
 }
