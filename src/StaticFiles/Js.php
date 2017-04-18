@@ -4,7 +4,7 @@ namespace Larakit\StaticFiles;
 use Illuminate\Support\Arr;
 
 class Js extends File {
-
+    
     /* внешние подключаемые скрипты */
     protected $js_external = [];
     /* инлайн скрипты */
@@ -13,44 +13,44 @@ class Js extends File {
     protected $js_onload = [];
     /* вставки в <noscript> */
     protected $noscript = [];
-
+    
     function clearAll() {
         return $this->clearExternal()
-                    ->clearInline()
-                    ->clearOnload();
+            ->clearInline()
+            ->clearOnload();
     }
-
+    
     function clearExternal() {
         $this->js_external = [];
-
+        
         return $this;
     }
-
+    
     function clearInline() {
         $this->js_inline = [];
-
+        
         return $this;
     }
-
+    
     function clearOnload() {
         $this->js_onload = [];
-
+        
         return $this;
     }
-
+    
     /**
      * @return Js
      */
-
+    
     static function instance() {
         static $js;
         if(!isset($js)) {
             $js = new Js();
         }
-
+        
         return $js;
     }
-
+    
     /**
      * Подключение внешнего скрипта, реально лежащего в корне сайта
      *
@@ -65,15 +65,15 @@ class Js extends File {
         if(mb_strpos($js, '/') === 0 && mb_strpos($js, '/', 1) !== 1) {
             $js = $host . $js;
         }
-
+        
         $this->js_external[$js] = [
             'condition' => $condition,
             'no_build'  => $no_build,
         ];
-
+        
         return $this;
     }
-
+    
     /**
      * Добавление куска инлайн джаваскрипта
      *
@@ -87,10 +87,10 @@ class Js extends File {
         } else {
             $this->js_inline[] = $js;
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Добавление кода, который должен выполниться при загрузке страницы
      *
@@ -104,10 +104,10 @@ class Js extends File {
         } else {
             $this->js_onload[] = $js;
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Добавление HTML-кода, который должен быть вставлен в случае отключенного JS
      *
@@ -123,33 +123,33 @@ class Js extends File {
         } else {
             $this->noscript[] = $code;
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Использовать во View для вставки вызова всех скриптов
+     *
      * @return string
      */
     function __toString() {
         try {
             Manager::init();
-
+            
             return trim($this->getExternal() . PHP_EOL . $this->getInline() . PHP_EOL . $this->getOnload() . $this->getNoscript());
-        }
-        catch(\Exception $e) {
-            dd($e);
+        } catch(\Exception $e) {
+            return $e->getMessage();
         }
     }
-
+    
     function getLink($js, $condition = null, $is_need_hash = true) {
         $sign      = (mb_strpos($js, '?') !== false) ? '&' : '?';
         $hash      = config('larakit.lk-staticfiles.version');
         $need_hash = (mb_strpos($js, $hash) === false);
-
+        
         return ($condition ? '<!--[' . $condition . ']>' : '') . '<script type="text/javascript" ' . "" . 'src="' . $js . ($is_need_hash && $need_hash ? $sign . $hash : '') . '"></script>' . ($condition ? '<![endif]-->' : '');
     }
-
+    
     function getNoscript() {
         $ret = [];
         if(count($this->noscript)) {
@@ -159,12 +159,13 @@ class Js extends File {
             }
             $ret[] = '</noscript>';
         }
-
+        
         return implode(PHP_EOL, $ret);
     }
-
+    
     /**
      * Только внешние скрипты
+     *
      * @return string
      */
     function getExternal($as_html = true) {
@@ -182,7 +183,7 @@ class Js extends File {
                 //если надо подключать все по отдельности
                 $js_code .= $this->getLink($js, $condition) . PHP_EOL;
             }
-
+            
             return $js_code;
         } else {
             $build    = [];
@@ -231,12 +232,12 @@ class Js extends File {
                 }
                 $js_code .= $this->getLink($this->buildUrl($build_name), $condition) . PHP_EOL;
             }
-
+            
             //$build_name = $this->makeFileName($this->js_inline, 'js/onload', 'js');
             return $js_code;
         }
     }
-
+    
     function requireBuild($build_name, $source) {
         $build_file = $this->buildFile($build_name);
         if(!file_exists($build_file)) {
@@ -246,17 +247,18 @@ class Js extends File {
             $this->save($build_file, trim($source));
         }
     }
-
+    
     function prepare($source, $need_min) {
         if($need_min) {
             $source = \JSMin::minify($source);
         }
-
+        
         return trim($source);
     }
-
+    
     /**
      * Только инлайн
+     *
      * @return <type>
      */
     function getInline($as_html = true) {
@@ -280,12 +282,13 @@ class Js extends File {
         //если требуется собирать инлайн скрипты в один внешний файл
         $build_name = $this->makeFileName($this->js_inline, 'js/inline', 'js');
         $this->requireBuild($build_name, $js_code);
-
+        
         return $this->getLink($this->buildUrl($build_name)) . PHP_EOL;
     }
-
+    
     /**
      * Only onload
+     *
      * @return <type>
      */
     function getOnload($as_html = true) {
@@ -304,14 +307,14 @@ class Js extends File {
         $js = $this->prepare($js, config('larakit.lk-staticfiles.js.onload.min'));
         if(!config('larakit.lk-staticfiles.js.onload.build')) {
             $ret = '<script type="text/javascript">' . PHP_EOL . $js . PHP_EOL . '</script>';
-
+            
             return $ret;
         }
         //if need build onload in one file
         $build_name = $this->makeFileName($this->js_onload, 'js/onload', 'js');
         $this->requireBuild($build_name, $js);
-
+        
         return $this->getLink($this->buildUrl($build_name)) . PHP_EOL;
     }
-
+    
 }
