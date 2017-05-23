@@ -25,6 +25,8 @@ class Manager {
     }
     
     static function init() {
+//        print '<pre>';
+//        debug_print_backtrace();
         if(self::$is_init) {
             return true;
         }
