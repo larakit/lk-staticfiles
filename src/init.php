@@ -21,3 +21,4 @@ if (class_exists('Larakit\Twig')) {
         return \Larakit\StaticFiles\Css::instance();
     });
 }
+\Larakit\Boot::register_middleware(\Larakit\StaticFiles\StaticMiddleware::class);
