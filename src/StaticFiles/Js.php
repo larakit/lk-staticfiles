@@ -232,8 +232,8 @@ class Js extends File {
                 }
                 $js_code .= $this->getLink($this->buildUrl($build_name), $condition) . PHP_EOL;
             }
-            
             //$build_name = $this->makeFileName($this->js_inline, 'js/onload', 'js');
+            
             return $js_code;
         }
     }
