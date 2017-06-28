@@ -4,15 +4,15 @@ return [
     //css добавленный как \LaraCss::addInline('.label{color:red}');
     'inline'   => [
         //собирать в билд (true|false)
-        'build' => (bool)env('larastatic.css.inline.build', $production),
+        'build' => (bool)env('LARAKIT_STATIC_CSS_INLINE_BUILD', $production),
         //минимизировать (true|false)
-        'min'   => (bool)env('larastatic.css.inline.min', $production),
+        'min'   => (bool)env('LARAKIT_STATIC_CSS_INLINE_MIN', $production),
     ],
     //css добавленный как \LaraCss::add('http://site.ru/!/static/css/styles.css');
     'external' => [
         //собирать в билд (true|false)
-        'build' => (bool)env('larastatic.css.external.build', $production),
+        'build' => (bool)env('LARAKIT_STATIC_CSS_EXTERNAL_BUILD', $production),
         //минимизировать (true|false)
-        'min'   => (bool)env('larastatic.css.external.min', $production),
+        'min'   => (bool)env('LARAKIT_STATIC_CSS_EXTERNAL_MIN', $production),
     ],
 ];

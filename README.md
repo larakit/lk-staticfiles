@@ -409,19 +409,19 @@ body{
 
 ~~~
 # включим сборку CSS [inline] в один файл
-larastatic.css.inline.build=1
+LARAKIT_STATIC_CSS_INLINE_BUILD=1
 
 # включим сборку CSS [подключенные по ссылке] в один файл
-larastatic.css.external.build=1
+LARAKIT_STATIC_CSS_EXTERNAL_BUILD=1
 
 # включим сборку CSS [inline] в один файл
-larastatic.js.inline.build=1
+LARAKIT_STATIC_JS_INLINE_BUILD=1
 
 # включим сборку CSS [подключенные по ссылке] в один файл
-larastatic.js.external.build=1
+LARAKIT_STATIC_JS_EXTERNAL_BUILD=1
 
 # включим сборку CSS [onload] в один файл
-larastatic.js.onload.build=1
+LARAKIT_STATIC_JS_ONLOAD_BUILD=1
 ~~~
 
 Теперь код нашей странички стал намного компактнее:
@@ -478,18 +478,19 @@ larastatic.js.onload.build=1
 Для этого в **.env** пропишем:
 
 ~~~
-larastatic.css.inline.min=1
-larastatic.css.external.min=1
+LARAKIT_STATIC_CSS_INLINE_MIN=1
+LARAKIT_STATIC_CSS_EXTERNAL_MIN=1
 ~~~
 
 
 Добавим в .env еще инструкций:
 ~~~
-larastatic.css.inline.min=1
-larastatic.css.external.min=1
-larastatic.js.inline.min=1
-larastatic.js.external.min=1
-larastatic.js.onload.min=1
+LARAKIT_STATIC_CSS_INLINE_MIN=1
+LARAKIT_STATIC_CSS_INLINE_MIN=1
+LARAKIT_STATIC_CSS_EXTERNAL_MIN=1
+LARAKIT_STATIC_JS_INLINE_MIN=1
+LARAKIT_STATIC_JS_EXTERNAL_MIN=1
+LARAKIT_STATIC_JS_ONLOAD_MIN=1
 ~~~
 
 Выложим статику еще раз, 
@@ -526,7 +527,7 @@ php artisan larastatic:deploy
 
 Затем добавим в .env еще инструкций:
 ~~~
-larastatic.host=http://st1.staticfiles
+LARAKIT_STATIC_PREFIX=http://st1.staticfiles
 ~~~
 
 Результат:
