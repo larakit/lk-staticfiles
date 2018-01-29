@@ -10,14 +10,14 @@ class Css extends File {
      *
      * @var array
      */
-    public $css_external;
+    public $css_external = [];
     
     /**
      * inline CSS
      *
      * @var string
      */
-    public $css_inline;
+    public $css_inline = [];
     
     static function instance() {
         static $css;
