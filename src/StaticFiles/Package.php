@@ -293,7 +293,7 @@ class Package {
             //затем подключим JS
             foreach($this->js as $url => $item) {
                 $condition = Arr::get($item, 'condition', null);
-                $no_build  = (bool) Arr::get($item, 'no_build', false);
+                $no_build  = (int) Arr::get($item, 'no_build', false);
                 Js::instance()
                     ->add($url, $condition, $no_build);
             }

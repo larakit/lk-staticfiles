@@ -1,4 +1,5 @@
 <?php
+
 namespace Larakit\StaticFiles;
 
 use Illuminate\Support\Arr;
@@ -176,7 +177,7 @@ class Js extends File {
             return '';
         }
         //если не надо собирать все в один билд-файл
-        if(!config('larakit.lk-staticfiles.js.external.build')) {
+        if(!(bool) env('LARAKIT_STATIC_JS_EXTERNAL_BUILD', false)) {
             $js_code = '';
             foreach($this->js_external as $js => $_js) {
                 $condition = Arr::get($_js, 'condition');
@@ -186,23 +187,38 @@ class Js extends File {
             
             return $js_code;
         } else {
-            $build    = [];
-            $no_build = [];
-            $js_code  = '';
+            $build           = [];
+            $no_build_before = [];
+            $no_build_after  = [];
+            $no_build        = [];
+            $js_code         = '';
             foreach($this->js_external as $js => $_js) {
                 $condition = Arr::get($_js, 'condition');
-                if(Arr::get($_js, 'no_build')) {
-                    $no_build[$condition][] = $js;
-                } else {
-                    $build[$condition][] = $js;
+                $no_build = (int)Arr::get($_js, 'no_build');
+//                if(0!=$no_build){
+//                    dump($no_build,$js, $_js);
+//                }
+                switch(true){
+                    //after
+                    case -1===$no_build:
+                        $no_build_after[$condition][] = $js;
+                        break;
+                    //before
+                    case 1===$no_build:
+                        $no_build_before[$condition][] = $js;
+                        break;
+                    default:
+                        $build[$condition][] = $js;
+                        break;
                 }
             }
-            foreach($no_build as $condition => $jses) {
-                $js_code .= '<!-- [no build] -->' . PHP_EOL;
+//            dd($no_build_before,$no_build_after);
+            foreach($no_build_before as $condition => $jses) {
+                $js_code .= '<!-- [no build before build] -->' . PHP_EOL;
                 foreach($jses as $url) {
                     $js_code .= $this->getLink($url, $condition, false) . PHP_EOL;
                 }
-                $js_code .= '<!-- [/no build] -->' . PHP_EOL;
+                $js_code .= '<!-- [/no build before build] -->' . PHP_EOL;
             }
             foreach($build as $condition => $js) {
                 $build_name = $this->makeFileName($this->js_external, 'js/external' . ($condition ? '/' . $condition : ''), 'js');
@@ -211,17 +227,22 @@ class Js extends File {
                     //соберем билд в первый раз
                     $build = [];
                     foreach($js as $url) {
-                        $parse = parse_url($url);
-                        $host  = Arr::get($parse, 'host');
+                        $parse  = parse_url($url);
+                        $host   = Arr::get($parse, 'host');
+                        $source = null;
                         if(!$host) {
-                            $_js = file_get_contents(public_path($url));
+                            $source = public_path($url);
+                            if(!file_exists($source)) {
+                                $source = \URL::to($url);
+                            }
                         } else {
                             if(mb_substr($url, 0, 2) == '//') {
                                 $url = 'http:' . $url;
                             }
-                            $_js = file_get_contents($url);
+                            $source = $url;
                         }
-                        $_js     = $this->prepare($_js, (mb_strpos($url, '.min.') !== false) || config('larakit.lk-staticfiles.js.external.min'));
+                        $_js     = file_get_contents($source);
+                        $_js     = $this->prepare($_js, (mb_strpos($url, '.min.') !== false) && config('larakit.lk-staticfiles.js.external.min'));
                         $build[] = "/**********************************************************************" . PHP_EOL;
                         $build[] = '* ' . $url . PHP_EOL;
                         $build[] = "**********************************************************************/" . PHP_EOL;
@@ -232,6 +253,15 @@ class Js extends File {
                 }
                 $js_code .= $this->getLink($this->buildUrl($build_name), $condition) . PHP_EOL;
             }
+            foreach($no_build_after as $condition => $jses) {
+                $js_code .= '<!-- [no build after build] -->' . PHP_EOL;
+                foreach($jses as $url) {
+                    $js_code .= $this->getLink($url, $condition, false) . PHP_EOL;
+                }
+                $js_code .= '<!-- [/no build after build] -->' . PHP_EOL;
+            }
+            
+            
             //$build_name = $this->makeFileName($this->js_inline, 'js/onload', 'js');
             
             return $js_code;
